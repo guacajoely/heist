@@ -126,7 +126,7 @@ namespace Heist
                 AddAnother();
             }
 
-            catch (Exception exp)
+            catch
             {
                 // PROMPT USER TO ENTER VALID RESPONSE IF CAN'T PARSE
                 Console.WriteLine();
@@ -161,12 +161,20 @@ namespace Heist
         static void RunHeist()
         {
             Console.WriteLine();
-            Console.Write($"How many times would you like to trial run the heist?: ");
+            Console.Write($"How many times would you like to trial run the heist? (max 100): ");
             string answer = Console.ReadLine().ToLower();
 
             try
             {
                 int parsedAnswer = int.Parse(answer);
+
+                // CHECK THAT USER ENTERED HEIST AMOUNT BETWEEN 1 AND 100
+                if (parsedDifficulty < 0 || parsedDifficulty > 100)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter a valid response");
+                    RunHeist();
+                }
 
                 for (int i = 0; i < parsedAnswer; i++)
                 {
