@@ -83,12 +83,6 @@ namespace Heist
 
                 AddTeamMember();
             }
-
-            // if(Int32.TryParse(skill, out parsedSkill)){
-
-            // }
-
-            // else{Console.WriteLine("Please enter a valid number between 1 and 10");}
         }
 
         static void AddAnother()
@@ -109,12 +103,37 @@ namespace Heist
             }
             else
             {
-                CheckBankDifficulty();
+                RunHeist();
             }
         }
 
+        static void RunHeist()
+        {
+            Console.WriteLine();
+            Console.Write($"How many times would you like to trial run the heist? :");
+            string answer = Console.ReadLine().ToLower();
+
+            try{
+                int parsedAnswer = int.Parse(answer);
+
+                for(int i=0; i<parsedAnswer; i++){
+                    TrialRun();
+                }
+            }
+            
+            catch (Exception exp)
+            {
+                //PROMPT USER TO ENTER VALID RESPONSE IF CAN'T PARSE
+                Console.WriteLine("Please enter a valid response");
+
+                RunHeist();
+            }
+
+
+        }
+
         //Once team is built, check if skill level is higher than bank difficulty
-        static void CheckBankDifficulty()
+        static void TrialRun()
         {
 
             //create BankDifficulty modifier named luckValue and add it to difficulty
@@ -128,13 +147,11 @@ namespace Heist
             if (BankDifficulty > TeamSkillLevel)
             {
                 Console.WriteLine($"Sorry, you're going to have to build a better team to rob this bank.");
-                Heist();
             }
 
             else
             {
                 Console.WriteLine($"Congratulations! Your team has the skill required to rob this bank.");
-                Heist();
             }
         }
 
