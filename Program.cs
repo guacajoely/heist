@@ -117,7 +117,10 @@ namespace Heist
         static void CheckBankDifficulty()
         {
 
-            int BankDifficulty = 100;
+            //create BankDifficulty modifier named luckValue and add it to difficulty
+            int luckValue = new Random().Next(-10, 10);
+
+            int BankDifficulty = 100 + luckValue;
             int TeamSkillLevel = TeamMemberList.Sum(member => member.SkillLevel);
 
             Console.WriteLine($"The teams skill level is {TeamSkillLevel} and the bank difficulty is {BankDifficulty}");
