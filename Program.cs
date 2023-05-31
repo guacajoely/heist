@@ -14,19 +14,48 @@ namespace Heist
 
         static void Heist()
         {
+            Console.WriteLine();
             Console.WriteLine("-----------------------------------------------------");
-            Console.WriteLine($"                   Plan your Heist");
+            Console.WriteLine($"                   Plan your Heist                  ");
             Console.WriteLine("-----------------------------------------------------");
             Console.WriteLine();
 
-            Console.WriteLine("Add your first team member!");
-            AddTeamMember();
+            try
+            {
+                Console.WriteLine("Please choose a bank difficulty between 1 and 100");
+                Console.Write("Difficulty: ");
+
+                string userDifficulty = Console.ReadLine();
+                parsedDifficulty = int.Parse(userDifficulty);
+
+                // // CHECK THAT USER ENTERED DIFFICULTY BETWEEN 1 AND 100
+                if (parsedDifficulty < 0 || parsedDifficulty > 100)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter a valid response");
+                    Heist();
+                }
+
+                Console.WriteLine();
+                Console.WriteLine("Add your first team member!");
+                AddTeamMember();
+            }
+            catch
+            {
+                Console.WriteLine();
+                Console.WriteLine("Please enter a valid response");
+                Heist();
+            }
         }
 
-        //A place to store ALL team members
+        // STORE ALL TEAM MEMBERS
         static public List<TeamMember> TeamMemberList = new List<TeamMember>();
 
-        // static public List<TeamMember>? TeamMemberList;
+        // STORE THE DIFFICULTY ENTERED BY THE USER
+        static public int parsedDifficulty;
+
+        // STORE SUCCESSFUL HEISTS
+        static public int successfulHeists;
 
         static void AddTeamMember()
         {
@@ -36,34 +65,54 @@ namespace Heist
             int parsedSkill;
             decimal parsedCourage;
 
-            //GET NEW TEAM MEMBER'S NAME FROM USER
-            Console.Write("What is the new Team Member's NAME?");
+            // GET NEW TEAM MEMBER'S NAME FROM USER
+            Console.WriteLine();
+            Console.Write("What is the new Team Member's NAME?: ");
 
             try
             {
                 name = Console.ReadLine();
 
-                //GET NEW TEAM MEMBER'S SKILL LEVEL FROM USER
+                // GET NEW TEAM MEMBER'S SKILL LEVEL FROM USER
+                Console.WriteLine();
                 Console.WriteLine("What is the new Team Member's SKILL LEVEL?");
-                Console.Write("Enter a number between 1 and 50:");
+                Console.Write("Enter a number between 1 and 50: ");
 
                 skill = Console.ReadLine();
                 parsedSkill = int.Parse(skill);
 
-                //GET NEW TEAM MEMBER'S COURAGE FACTOR FROM USER
+                // CHECK THAT USER ENTERED SKILL LEVEL BETWEEN 1 AND 50
+                if (parsedSkill < 0 || parsedSkill > 50)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter a valid response");
+                    AddTeamMember();
+                }
+
+                // GET NEW TEAM MEMBER'S COURAGE FACTOR FROM USER
+                Console.WriteLine();
                 Console.WriteLine("What is the new Team Member's COURAGE FACTOR?");
-                Console.Write("Enter a number between 0.0 and 2.0:");
+                Console.Write("Enter a number between 0.0 and 2.0: ");
 
                 courage = Console.ReadLine();
                 parsedCourage = Decimal.Parse(courage);
 
-                //Make a new TeamMember object using the TeamMember class
+                // CHECK THAT USER ENTERED COURAGE FACTOR BETWEEN 0 AND 2
+                if (parsedCourage < 0 || parsedCourage > 2)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter a valid response");
+                    AddTeamMember();
+                }
+
+                // CREATE A NEW TEAMMEMBER OBJECT USING THE TEAMMEMBER CLASS
                 var newTeamMember = new TeamMember(name, parsedSkill, parsedCourage);
 
-                //add new TeamMember to List of Team Members (TeamMemberList)
+                // ADD NEW TEAMMEMBER TO LIST DECLARED AT START
                 TeamMemberList.Add(newTeamMember);
 
-                Console.WriteLine($"You now have {TeamMemberList.Count} members on your team!");
+                Console.WriteLine();
+                Console.WriteLine($"You now have {TeamMemberList.Count} member/s on your team!");
 
                 foreach (TeamMember member in TeamMemberList)
                 {
@@ -73,12 +122,14 @@ namespace Heist
                 }
                 ;
 
-                //ASK USER IF THEY'D LIKE TO ADD ANOTHER TEAM MEMBER
+                // ASK USER IF THEY'D LIKE TO ADD ANOTHER TEAM MEMBER
                 AddAnother();
             }
+
             catch (Exception exp)
             {
-                //PROMPT USER TO ENTER VALID RESPONSE IF CAN'T PARSE
+                // PROMPT USER TO ENTER VALID RESPONSE IF CAN'T PARSE
+                Console.WriteLine();
                 Console.WriteLine("Please enter a valid response");
 
                 AddTeamMember();
@@ -88,12 +139,12 @@ namespace Heist
         static void AddAnother()
         {
             Console.WriteLine();
-            Console.Write($"Would you like to add another team member? (Y/N):");
+            Console.Write($"Would you like to add another team member? (Y/N): ");
             string answer = Console.ReadLine().ToLower();
 
             while (answer != "y" && answer != "n")
             {
-                Console.Write($"Would you like to add another team member? (Y/N):");
+                Console.Write($"Would you like to add another team member? (Y/N): ");
                 answer = Console.ReadLine().ToLower();
             }
 
@@ -110,56 +161,84 @@ namespace Heist
         static void RunHeist()
         {
             Console.WriteLine();
-            Console.Write($"How many times would you like to trial run the heist? :");
+            Console.Write($"How many times would you like to trial run the heist?: ");
             string answer = Console.ReadLine().ToLower();
 
-            try{
+            try
+            {
                 int parsedAnswer = int.Parse(answer);
 
-                for(int i=0; i<parsedAnswer; i++){
+                for (int i = 0; i < parsedAnswer; i++)
+                {
                     TrialRun();
                 }
+
+                Console.WriteLine();
+                Console.WriteLine($"HEIST REPORT");
+                Console.WriteLine("-----------------------------------------------------");
+                Console.WriteLine($"{successfulHeists} of {answer} heists were successful");
+                Console.WriteLine();
+                Replay();
             }
-            
             catch (Exception exp)
             {
-                //PROMPT USER TO ENTER VALID RESPONSE IF CAN'T PARSE
+                // PROMPT USER TO ENTER VALID RESPONSE IF CAN'T PARSE
+                Console.WriteLine();
                 Console.WriteLine("Please enter a valid response");
 
                 RunHeist();
             }
-
-
         }
 
-        //Once team is built, check if skill level is higher than bank difficulty
+        // FUNCTION THAT CHECKS IF BANK DIFFICULTY IS HIGHER THAN TEAM SKILL (FAIL) or LOWER (SUCCESS)
         static void TrialRun()
         {
-
-            //create BankDifficulty modifier named luckValue and add it to difficulty
+            // CREATE BANKDIFFICULTY MODIFIER NAMED LUCK VALUE AND ADD TO BANK DIFFICULTY ENTERED BY USER
             int luckValue = new Random().Next(-10, 10);
 
-            int BankDifficulty = 100 + luckValue;
+            int BankDifficulty = parsedDifficulty + luckValue;
             int TeamSkillLevel = TeamMemberList.Sum(member => member.SkillLevel);
 
-            Console.WriteLine($"The teams skill level is {TeamSkillLevel} and the bank difficulty is {BankDifficulty}");
+            Console.WriteLine();
+            Console.WriteLine(
+                $"Your team's skill level is {TeamSkillLevel} and the bank difficulty is {BankDifficulty}"
+            );
 
             if (BankDifficulty > TeamSkillLevel)
             {
-                Console.WriteLine($"Sorry, you're going to have to build a better team to rob this bank.");
+                Console.WriteLine($"Sorry, your team failed this heist.");
             }
-
             else
             {
-                Console.WriteLine($"Congratulations! Your team has the skill required to rob this bank.");
+                Console.WriteLine($"Congratulations! Your team successfully robbed the bank.");
+                successfulHeists++;
             }
         }
 
+        // ONCE GAME ENDS PROMPT PLAY AGAIN QUESTION
+        static void Replay()
+        {
+            Console.WriteLine();
+            Console.Write($"Play Again? (Y/N):");
+            string answer = Console.ReadLine().ToLower();
 
+            while (answer != "y" && answer != "n")
+            {
+                Console.Write($"Play Again? (Y/N):");
+                answer = Console.ReadLine().ToLower();
+            }
 
-
-
-
-
+            if (answer == "y")
+            {
+                //CLEAR GLOBAL VARIABLES FROM PREVIOUS HEIST
+                successfulHeists = 0;
+                TeamMemberList = new List<TeamMember>();
+                Heist();
+            }
+            else
+            {
+                Environment.Exit(0);
+            }
+        }
     }
 }
